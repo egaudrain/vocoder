@@ -20,21 +20,20 @@ if Srate/2<UpperFreq
     error('vocode:fs_too_low', 'The sampling rate %d is too low for the upper frequency %d', Srate, UpperFreq);
 end
 
+FS=Srate/2;
+nOrd=order*2;
+
 switch type
     % ------------------ greenwood spacing of filters ---------------------
     case 'greenwood'
         
-        FS=Srate/2;
-        nOrd=order*2;
+        
         [lowerl,center,upperl]=greenwud(nChannels,LowFreq,UpperFreq,0);
                 
         
     % ------------------ linear filter spacing  -------------------------
     case {'lin', 'linear'}
         
-        FS=Srate/2;
-        
-        nOrd=6;
         range=(UpperFreq-LowFreq);
         interval=range/nChannels;
         
@@ -53,9 +52,6 @@ switch type
     % ------------------ logarithmic filter spacing  ----------------------
     case 'log'
         
-        FS=Srate/2;
-        
-        nOrd=6;
         range=log10(UpperFreq/LowFreq);
         interval=range/nChannels;
         
