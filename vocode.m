@@ -9,7 +9,11 @@ function [xOut, fsOut, p] = vocode(xIn, fsIn, params)
 %       analysis_filters.center
 %       analysis_filters.lower
 %       analysis_filters.upper
-%   Such structure can be produced by FILTER_BANDS.
+%   Such structure can be produced by FILTER_BANDS. The elements filterA
+%   and filterB are cell arrays containing the filter coefficients for each
+%   channel. If, for a given channel, a cell array is provided, the filters
+%   will be applied sequentially. Filters are applied with the FILTFILT
+%   function.
 %
 %   PARAMS can also contain a field 'synthesis_filters' of the same form.
 %   If no such field is provided, the content of 'analysis_filters' will be
@@ -40,7 +44,7 @@ function [xOut, fsOut, p] = vocode(xIn, fsIn, params)
 %   initialized using the field PARAMS.random_seed. By default this field
 %   contains sum(100*clock).
 %
-%   See also FILTER_BANDS, GET_LOWNOISE, GET_PSHC
+%   See also FILTER_BANDS, GET_LOWNOISE, GET_PSHC, FILTFILT
  
 
 % Etienne Gaudrain <etienne.gaudrain@mrc-cbu.cam.ac.uk> - 2010-02-17
@@ -63,7 +67,7 @@ fs = fsIn;
 % the RMS of the output corresponds to the RMS of this portion of the
 % spectrum of the input.
 
-[b, a] = butter(min(p.analysis_filters.order([1, end])), [p.analysis_filters.lower(1), p.analysis_filters.upper(end)]*2/fs);
+[b, a] = butter(ceil(min(p.analysis_filters.order([1, end]))), [p.analysis_filters.lower(1), p.analysis_filters.upper(end)]*2/fs);
 rmsOut = rms(filtfilt(b, a, xIn));
 
 %--------------------- Prepare the band filters
@@ -121,8 +125,8 @@ levels = zeros(nCh, 1);
 %--------------------- Synthesize each channel
 
 for i=1:nCh
-    %y=filter(AF.filterB(i,:), AF.filterA(i,:),x)';
-    y = filtfilt(AF.filterB(i,:), AF.filterA(i,:), xIn);
+
+    y = apply_filter(AF, i, xIn);
     levels(i) = rms(y);
     
     switch p.envelope.method
@@ -152,7 +156,7 @@ for i=1:nCh
             rng(p.random_seed);
             nz = sign(rand(nSmp,1)-0.5);
             if p.synth.filter_before
-                nz = filtfilt(SF.filterB(i,:), SF.filterA(i,:), nz);
+                nz = apply_filter(SF, i, nz);
             end
             
         case {'sine', 'sin'}
@@ -171,7 +175,7 @@ for i=1:nCh
     ModC(:,i) = env .* nz;
     
     if p.synth.filter_after
-        ModC(:,i) = filtfilt(SF.filterB(i,:), SF.filterA(i,:), ModC(:,i));
+        ModC(:,i) = apply_filter(SF, i, ModC(:,i));
     end
     
     % Restore the RMS of the channel
@@ -255,4 +259,22 @@ for k = 1:length(keys)
         c.(key) = b.(key);
     end
     
+end
+
+
+%==========================================================================
+function y = apply_filter(filter_struct, i, x)
+% Filters X in channel I of FILTER_STRUCT
+
+if iscell(filter_struct.filterB{i})
+    % filterB/A is a collection of filters that need to be run after each
+    % other.
+    y = x;
+    b = filter_struct.filterB{i};
+    a = filter_struct.filterA{i};
+    for k=1:length(b)
+        y = filtfilt(b{k}, a{k}, y);
+    end
+else
+    y = filtfilt(filter_struct.filterB{i}, filter_struct.filterA{i}, x);
 end
