@@ -192,7 +192,7 @@ Note that for the 'noise', 'low-noise' and 'pshc' carriers, the random stream wi
 References
 ----------
 
-+ Bingabr et al. (2008) Hearing Research. doi: 10.1016/j.heares.2008.04.012.
-+ Skinner et al. (2002) JARO, doi: 10.1007/s101620020013.
++ Bingabr et al. (2008) Hearing Research. doi: [10.1016/j.heares.2008.04.012](http://dx.doi.org/10.1016/j.heares.2008.04.012).
++ Skinner et al. (2002) JARO, doi: [10.1007/s101620020013](http://dx.doi.org/10.1007/s101620020013).
 
 
