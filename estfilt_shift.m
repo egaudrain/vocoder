@@ -87,6 +87,12 @@ switch filter_type
         filter_func = @butter;
     case 'bingabr_2008'
         filter_func = @(n,w) filter_bingabr_2008(n,w,fs);
+    otherwise
+        if isa(filter_type, 'function_handle')
+            filter_func = @(n,w) filter_type(n,w,fs);
+        else
+            error('Filter type "%s" is unknown.', filter_type);
+        end
 end
 
 %filterA=zeros(nChannels,nOrd+1);
@@ -99,7 +105,7 @@ for i=1:nChannels
     w=[lowerl(i)/FS, upperl(i)/FS];
     
     % Butter is a special case because we can get orders in half
-    if strcmp(filter_type, 'butter') && mod(order,1)~=0
+    if ischar(filter_type) && strcmp(filter_type, 'butter') && mod(order,1)~=0
         if mod(order,1)==.5 % We have half filters => use low/high pass 
             [b1,a1] = butter(order*2, w(1), 'high');
             [b2,a2] = butter(order*2, w(2), 'low');

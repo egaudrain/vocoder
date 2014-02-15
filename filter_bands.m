@@ -13,11 +13,11 @@ function filter_struct = filter_bands(range, n, fs, type, order, shift)
 %   applied.
 %
 %   By default, Buttherworth filters are used. To use other filters,
-%   provide a cell array of the form {FILTER_TYPE, ORDER}. Providing a
-%   number is equivalent to {'butter', ORDER}. Other possible values are
-%   'bingabr_2008' (then the order is the slope in dB/mm) or a function
-%   handle of the form:
-%       [B, A] = FILTRE_FUNCTION(ORDER, [LOW, HIGH])
+%   provide a cell array in place of the ORDER argument, of the form 
+%   {FILTER_TYPE, ORDER}. Providing a number is equivalent to
+%   {'butter', ORDER}. Other possible values are 'bingabr_2008' (then the
+%   order is the slope in dB/mm) or a function handle of the form:
+%       [B, A] = FILTER_FUNCTION(ORDER, [LOW, HIGH])
 %   The B and A coefficients will be passed to the FILTFILT function.
 %
 %   If the type is 'butter' and a fractional order is provided, separate

@@ -47,7 +47,7 @@ for i=1:size(EnvR,2)
     Env(:,i) = interp1(tR, EnvR(:,i), t, 'linear', 0);
 end
 
-if ~p.synth .filter_after
+if ~p.synth.filter_after
     warning('If using the n-of-m envelope modifier it is very highly recommended to add the "filter_after" option to avoid clicks and strange behaviour.');
 end
 

@@ -29,7 +29,7 @@ function [xOut, fsOut, p] = vocode(xIn, fsIn, params)
 %       order   = the order of the filter, the actual order will be
 %                 multiplied by 4 (default is 2, hence filters of effective
 %                 order 8)
-%   The sub-field 'modifiers' contains a list (cell-array) of
+%   The field 'modifiers' contains a list (cell-array) of
 %   function names (or handles) modifying the envelope. A cell array can
 %   also be provided to give arguments to the function. Possible values
 %   are:
