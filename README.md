@@ -3,6 +3,8 @@ VOCODER (2013)
 
 The code in this section is used to implement various vocoders, generally used to simulate acoustically what cochlear implant users experience through their device. The code base was originally produced by Stuart Rosen, later modified by Bob Carlyon, and since more or less completely rewritten in a more modern style and with many additions.
 
+This manual is written assuming the reader has some notions of how a vocoder works.
+
 The `vocode()` function is supposed to cover a lot of cases, and therefore receives a rather complex set of parameters. The said function is called like this: `[y, fs]=vocode(x,fs,p)`. `x` is a (single channel, i.e. mono) signal. `fs` is the sampling frequency and `p` is a structure with all the parameters. The function returns `y`, the vocoded version of `x`.
 
 This document describes how to setup the parameter structure `p`.
