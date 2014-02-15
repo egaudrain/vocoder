@@ -16,8 +16,6 @@ This document describes how to setup the parameter structure `p`.
 Each of these are documented below, in the same order.
 
 
-
-
 Filter banks
 ------------
 
@@ -87,7 +85,7 @@ To create equivalent synthesis filters but 4th order, and shifted by 4 mm toward
 p.synthesis_filters = filter_bands([200, 7000], 8, fs, 'greenwood', 1, 4);
 ```
 
-Remember, the order argument passed to the filter_bands function will be multiplied by 4, so we pass 1 to get 4th order filters. If we wanted 6th order filters, we would pass 1.5. If ommited, the value 3 is used, resulting in 12th order filters.
+Remember, the order argument passed to the filter_bands function will be multiplied by 4, so we pass 1 to get 4th order filters. If we wanted 6th order filters, we would pass 1.5. If omitted, the value 3 is used, resulting in 12th order filters.
 
 To create a structure of 12th order Butterworth analysis filter matching the frequencies of Cochlear devices:
 
@@ -174,6 +172,21 @@ Then add it to the modifiers.
 ```matlab
 p.envelope.modifiers = {{'n-of-m', 5}, {'threshold', 0.02}, {@envelope_mod_compression, .5}};
 ```
+
+
+
+Carrier
+-------
+
+The field 'synth' describes how the resynthesis should be performed:
+- `carrier`: can be 'noise' (default), 'sin', 'low-noise' or 'pshc'.
+- `filter_before`: if `true`, the carrier is filtered before multiplication with the envelope (default is false).
+- `filter_after`: if `true`, the modulated carrier is refiltered in the band to suppress sidebands (default is true). Keep in mind that if you filter broadband carriers both before and after modulation you may alter the spectral shape of your signal.
+- `f0`: used when `carrier` is 'pshc'. There is no default, but 1 is a good value.
+
+Note that for the 'noise', 'low-noise' and 'pshc' carriers, the random stream will be initialized using the field `p.random_seed`. By default this field is set to sum(100*clock).
+
+
 
 
 References
