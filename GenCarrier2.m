@@ -1,5 +1,5 @@
-function [array_final,time_final]=GenCarrier2(f0, hmin, hmax, fs, duration, phases, scalenew, factor)
-%[array,time]=GenCarrier2(f0, hmin, hmax, fs, duration, phases, scalenew, factor)
+function [array_final,time_final]=GenCarrier2(f0, hmin, hmax, fs, duration, phases, scalenew, k)
+%[array,time]=GenCarrier2(f0, hmin, hmax, fs, duration, phases, scalenew, k)
 %
 %Generates a harmonic complex with consecutive harmonic number hmin to hmax
 %and also choice of phases. Shaped by digital 8th order Butterworth.
@@ -11,16 +11,16 @@ function [array_final,time_final]=GenCarrier2(f0, hmin, hmax, fs, duration, phas
 %       fs = sampling frequency (Hz)
 % duration = duration in seconds
 %   phases =
-%       0, 'sin', 'sine'              => sin phase
-%       1, 'cos', 'cosine'            => cos phase
-%       2, 'alt'                      => alternating, odd: cos, even: sin
-%       3, 'rand', 'random'           => random
-%       4, 'rep', 'expanding'         => rate expanding phase
-%       5, 'sch', 'sch+', 'schroeder' => positive Schroeder
-%       6, 'sch-', 'schroeder-'       => negative Schroeder
+%       0, 'sin', 'sine'                                => sin phase
+%       1, 'cos', 'cosine'                              => cos phase
+%       2, 'alt'                                        => alternating, odd: cos, even: sin
+%       3, 'rand', 'random'                             => random
+%       4, 'pshc'                                       => pulse-spreading harmonic complex
+%       5, 'sch', 'sch+', 'schroeder'                   => positive Schroeder
+%       6, 'sch-', 'schroeder-'                         => negative Schroeder
 % scalenew = scaling
-%   factor = only used for rate-expanding phase. Gives an effective rate
-%            equal to F0 * factor^2
+%   k = order of PSHC. only used for PSHC generation. Gives an effective rate
+%            equal to F0 * k^2
 %
 %output:
 %    array (values)
@@ -41,8 +41,20 @@ function [array_final,time_final]=GenCarrier2(f0, hmin, hmax, fs, duration, phas
 % modified from hrmcompdig_filttimes.m to start the stimulus in between 2 periods (so that every pulses
 % are identical).
 
-% Modified on 23/11/2011 by Olivier Macherey to allow custom phase
-% relationships that expand the rate.
+% Modified on 23/11/2011 by Olivier Macherey to allow PSHC
+% generation.
+% Any publication with results obtained using the PSHC option should cite the following:
+%
+% Hilkhuysen, G., Mesnildrey, Q., and Macherey, O. (2013) "Pulse-spreading
+% harmonic complexes: an advantageous carrier for simulating cochlear
+% implants." Conference on implantable auditory prostheses, Granlibakken
+% Conference Center, CA, USA.
+% 
+% AND (when/if accepted for publication)
+%
+% Hilkhuysen, G., and Macherey, O. "Optimizing pulse-spreading harmonic
+% complexes to minimize intrinsic modulations after cochlear filtering",
+% submitted to JASA.
 
 % Modified on 09/09/2013 by Etienne Gaudrain to change argument handling,
 % phase generation (outside the loop), ...
@@ -51,19 +63,14 @@ function [array_final,time_final]=GenCarrier2(f0, hmin, hmax, fs, duration, phas
 % tic
 global clip
 clip=0;
-%global itrace;
-%itrace=0;
 
 halfpi=pi*0.5;
-%rlog2=log(2.0); %could be done more directly using log2
 
 halfperiod_samples=round(fs/f0/4);
 % add half a pulse train period at the beginning and at the end of the pulse train
 nopts=round(duration*fs)+2*halfperiod_samples; %*[ ] round equiv to fortran's nint?
 
 temparray=zeros(nopts,1);
-%value=temparay;
-%array=temparay;
 
 n=1:nopts;
 time=(n./fs)';
@@ -72,7 +79,7 @@ time=(n./fs)';
 % = 1 => cos
 % = 2 => ALT: odd=cos even=sin
 % = 3 => random
-% = 4 => rate expanding phase
+% = 4 => PSHC
 % = 5 => schroeder
 
 hn = hmin:hmax;
@@ -92,19 +99,19 @@ switch phases
     case {3, 'rand', 'random'}
         phase=rand(size(freq))*2*pi;
 
-    case {4, 'expanding', 'rep'}
+    case {4, 'pshc'}
         
         if nargin<8
-            error('FACTOR must be provided for rate-expanding phase');
+            error('PSHC order (i.e. k) must be provided for rate-expanding phase');
         end
         
-        u=randperm(factor)-1;
-        v=rand(1,factor);
+        r=randperm(k)-1;
+        u=rand(1,k);
         
         phase = zeros(size(freq));
-        for j = 0:1:factor-1
-            s = mod((hn+j)/factor,1)==0;
-            phase(s) = 2*u(j+1)*pi*hn(s)/factor^2+v(j+1)*2*pi;
+        for j = 0:1:k-1
+            s = mod((hn+j)/k,1)==0;
+            phase(s) = 2*pi*(hn(s)*r(j+1)/k^2+u(j+1));
         end
 
     case {5, 'schroeder', 'sch+', 'sch'}
@@ -141,15 +148,11 @@ end
 % [b,a]=butter(8,Wn);
 % array=filter(b,a,array);
 
-%fvtool(b,a);
-
 % Extract the desired duration of the pulse by removing half a period at
 % the beginning and half a period at the end
 nopts_final=1:round(duration*fs);
-%nosamples=length(nopts_final);
 time_final=nopts_final./fs;
 
-%array_final(1:length(time_final))=array(halfperiod_samples+1:1:length(array)-halfperiod_samples);
 array_final = array(halfperiod_samples+1:1:end-halfperiod_samples);
 
 % toc

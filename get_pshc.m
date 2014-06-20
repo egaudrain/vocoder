@@ -28,7 +28,7 @@ if exist(fname, 'file')
 else
     rng(random_seed);
     
-    x = GenCarrier2(f0, round(f1/f0), round(f2/f0), fs, 1/f0, 'rep', 1, GenCarrier2_factor(sqrt(f1*f2), f0));
+    x = GenCarrier2(f0, round(f1/f0), round(f2/f0), fs, 1/f0, 'pshc', 1, GenCarrier2_PSHC_Order(sqrt(f1*f2), f0));
     
     x = .9 * x / max(abs(x));
     
@@ -43,7 +43,7 @@ i = randi([1, floor((N/f0-d)*fs+1)]);
 nz = x(i:i+n-1);
 
 %--------------------------------------------------------------------------
-function f = GenCarrier2_factor(fc, f0)
+function f = GenCarrier2_PSHC_Order(fc, f0)
 
 % Polyfit 3rd order on
 % Freqs  = [ 250, 500, 1000, 2000, 4000, 6000, 8000];
