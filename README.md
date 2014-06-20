@@ -17,6 +17,29 @@ This document describes how to setup the parameter structure `p`.
 
 Each of these are documented below, in the same order.
 
+To give you an overview on how to use the code, here's a complete working example:
+
+```matlab
+[x, fs] = wavread('filename.wav'); % Replace filename.wav with the actual path to the wave file
+
+p = struct();
+p.analysis_filters  = filter_bands([150, 7000], 8, fs, 'greenwood', 1.5); % Order is multiplied by 4, so 1.5 gives 6
+p.synthesis_filters = p.analysis_filters;
+
+p.envelope = struct();
+p.envelope.method = 'low-pass';
+p.envelope.rectify = 'half-wave';
+p.envelope.order = 2; % This produces a filter of order 4. Order 3 is not possible here.
+p.envelope.fc = 160;
+
+p.synth = struct();
+p.synth.carrier = 'sin';
+p.synth.filter_before = false;
+p.synth.filter_after  = false;
+
+[y, fs] = vocoder(x, fs, p);
+```
+
 
 Filter banks
 ------------

@@ -21,7 +21,8 @@
     <div class="previewPage">
     <div id="readme" class="announce md">
       <article class="markdown-body entry-content">
-        <h1>VOCODER (2013)</h1>
+        <h1>
+<a name="user-content-vocoder-2013" class="anchor" href="#vocoder-2013" aria-hidden="true"><span class="octicon octicon-link"></span></a>VOCODER (2013)</h1>
 
 <p>The code in this section is used to implement various vocoders, generally used to simulate acoustically what cochlear implant users experience through their device. The code base was originally produced by Stuart Rosen, later modified by Bob Carlyon, and since more or less completely rewritten in a more modern style and with many additions.</p>
 
@@ -44,7 +45,30 @@
 <code>synth</code>: describes the type of carrier that'll be used, and how to combine it with the envelope.</li>
 </ul><p>Each of these are documented below, in the same order.</p>
 
-<h2>Filter banks</h2>
+<p>To give you an overview on how to use the code, here's a complete working example:</p>
+
+<div class="highlight highlight-matlab"><pre><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">fs</span><span class="p">]</span> <span class="p">=</span> <span class="n">wavread</span><span class="p">(</span><span class="s">'filename.wav'</span><span class="p">);</span> <span class="c">% Replace filename.wav with the actual path to the wave file</span>
+
+<span class="n">p</span> <span class="p">=</span> <span class="n">struct</span><span class="p">();</span>
+<span class="n">p</span><span class="p">.</span><span class="n">analysis_filters</span>  <span class="p">=</span> <span class="n">filter_bands</span><span class="p">([</span><span class="mi">150</span><span class="p">,</span> <span class="mi">7000</span><span class="p">],</span> <span class="mi">8</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="s">'greenwood'</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">);</span> <span class="c">% Order is multiplied by 4, so 1.5 gives 6</span>
+<span class="n">p</span><span class="p">.</span><span class="n">synthesis_filters</span> <span class="p">=</span> <span class="n">p</span><span class="p">.</span><span class="n">analysis_filters</span><span class="p">;</span>
+
+<span class="n">p</span><span class="p">.</span><span class="n">envelope</span> <span class="p">=</span> <span class="n">struct</span><span class="p">();</span>
+<span class="n">p</span><span class="p">.</span><span class="n">envelope</span><span class="p">.</span><span class="n">method</span> <span class="p">=</span> <span class="s">'low-pass'</span><span class="p">;</span>
+<span class="n">p</span><span class="p">.</span><span class="n">envelope</span><span class="p">.</span><span class="n">rectify</span> <span class="p">=</span> <span class="s">'half-wave'</span><span class="p">;</span>
+<span class="n">p</span><span class="p">.</span><span class="n">envelope</span><span class="p">.</span><span class="n">order</span> <span class="p">=</span> <span class="mi">2</span><span class="p">;</span> <span class="c">% This produces a filter of order 4. Order 3 is not possible here.</span>
+<span class="n">p</span><span class="p">.</span><span class="n">envelope</span><span class="p">.</span><span class="n">fc</span> <span class="p">=</span> <span class="mi">160</span><span class="p">;</span>
+
+<span class="n">p</span><span class="p">.</span><span class="n">synth</span> <span class="p">=</span> <span class="n">struct</span><span class="p">();</span>
+<span class="n">p</span><span class="p">.</span><span class="n">synth</span><span class="p">.</span><span class="n">carrier</span> <span class="p">=</span> <span class="s">'sin'</span><span class="p">;</span>
+<span class="n">p</span><span class="p">.</span><span class="n">synth</span><span class="p">.</span><span class="n">filter_before</span> <span class="p">=</span> <span class="n">false</span><span class="p">;</span>
+<span class="n">p</span><span class="p">.</span><span class="n">synth</span><span class="p">.</span><span class="n">filter_after</span>  <span class="p">=</span> <span class="n">false</span><span class="p">;</span>
+
+<span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">fs</span><span class="p">]</span> <span class="p">=</span> <span class="n">vocoder</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">p</span><span class="p">);</span>
+</pre></div>
+
+<h2>
+<a name="user-content-filter-banks" class="anchor" href="#filter-banks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Filter banks</h2>
 
 <p>The filter banks are described in <code>p.analysis_filters</code> and <code>p.synthesis_filters</code>. If only the former is provided, the analysis filters are also used for synthesis. If both analysis and synthesis filter banks are provided, they need to have the same number of channels.</p>
 
@@ -71,7 +95,8 @@
 
 <p><code>filter_type</code> is a string giving the name of the type of filter used (Butterworth; Bingabr et al. 2008...).</p>
 
-<h3>Convenience functions</h3>
+<h3>
+<a name="user-content-convenience-functions" class="anchor" href="#convenience-functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Convenience functions</h3>
 
 <p>Two help creating these rather complicated structures, two convenience functions are provided. <code>filter_bands()</code> is the easiest, and is actually a wrapper for the second one <code>estfilt_shift()</code>.</p>
 
@@ -102,7 +127,8 @@
 
 <p>If the filter type is 'butter' (including if <code>order</code> is simply a number rather than a cell-array)  and a fractional order is used (has to be a multiple of 1/2), separate low-pass and high-pass filters are used instead of a bandpass.</p>
 
-<h3>Examples</h3>
+<h3>
+<a name="user-content-examples" class="anchor" href="#examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h3>
 
 <p>To make a structure of eight 12th order Butterworth filters equally spaced on the cochlea from 200 to 7000 Hz:</p>
 
@@ -129,7 +155,8 @@
 
 <p>The <code>[0 16]</code> vector is due to the fact that standard electrode arrays are about 16 mm long. The value of 1174 Hz is the average frequency corresponding to the location of the most apical electrode (Skinner et al. 2002).</p>
 
-<h2>Envelope</h2>
+<h2>
+<a name="user-content-envelope" class="anchor" href="#envelope" aria-hidden="true"><span class="octicon octicon-link"></span></a>Envelope</h2>
 
 <p>The default envelope structure is as follows:</p>
 
@@ -153,7 +180,8 @@
 <code>order</code>: again if the method is 'low-pass', this specifies the order of the filter. Because the <code>filtfilt()</code> function is used, the order is effectively multiplied by 2.</li>
 <li>
 <code>modifiers</code>: a cell-array listing modifiers for the envelope. These are detailed below.</li>
-</ul><h3>Envelope modifiers</h3>
+</ul><h3>
+<a name="user-content-envelope-modifiers" class="anchor" href="#envelope-modifiers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Envelope modifiers</h3>
 
 <p>The field 'modifiers' contains a list (cell-array) of function names (or handles) modifying the envelope in each channel. A cell array can also be provided to give arguments to the function. Possible values are:</p>
 
@@ -165,7 +193,8 @@
 
 <p>However, <strong>if modifiers are used, the envelopes are not normalized and RMS adjusted</strong>. Only the signal obtained after summation of the channels is scaled. This is particularly important for the n-of-m modifier, for instance.</p>
 
-<h3>Examples</h3>
+<h3>
+<a name="user-content-examples-1" class="anchor" href="#examples-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h3>
 
 <p>This defines an envelope with a cutoff of 50 Hz, with selection of 5 maxima.</p>
 
@@ -193,7 +222,8 @@
 <div class="highlight highlight-matlab"><pre><span class="n">p</span><span class="p">.</span><span class="n">envelope</span><span class="p">.</span><span class="n">modifiers</span> <span class="p">=</span> <span class="p">{{</span><span class="s">'n-of-m'</span><span class="p">,</span> <span class="mi">5</span><span class="p">},</span> <span class="p">{</span><span class="s">'threshold'</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">},</span> <span class="p">{@</span><span class="n">envelope_mod_compression</span><span class="p">,</span> <span class="p">.</span><span class="mi">5</span><span class="p">}};</span>
 </pre></div>
 
-<h2>Carrier</h2>
+<h2>
+<a name="user-content-carrier" class="anchor" href="#carrier" aria-hidden="true"><span class="octicon octicon-link"></span></a>Carrier</h2>
 
 <p>The field 'synth' describes how the resynthesis should be performed:</p>
 
@@ -208,7 +238,8 @@
 <code>f0</code>: used when <code>carrier</code> is 'pshc'. There is no default, but 1 is a good value.</li>
 </ul><p>Note that for the 'noise', 'low-noise' and 'pshc' carriers, the random stream will be initialized using the field <code>p.random_seed</code>. By default this field is set to sum(100*clock).</p>
 
-<h2>References</h2>
+<h2>
+<a name="user-content-references" class="anchor" href="#references" aria-hidden="true"><span class="octicon octicon-link"></span></a>References</h2>
 
 <ul>
 <li>Bingabr et al. (2008) Hearing Research. doi: <a href="http://dx.doi.org/10.1016/j.heares.2008.04.012">10.1016/j.heares.2008.04.012</a>.</li>
