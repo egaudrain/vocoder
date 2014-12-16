@@ -45,7 +45,7 @@ switch type
         LowFreq = range(1);
         UpperFreq = range(2);
         
-        bf = linspace(LowFreq, UpperFred, nChannels+1);
+        bf = linspace(LowFreq, UpperFreq, nChannels+1);
         lowerl = bf(1:end-1);
         upperl = bf(2:end);
         center = (lowerl+upperl)/2;        
@@ -56,7 +56,7 @@ switch type
         LowFreq = range(1);
         UpperFreq = range(2);
         
-        bf = 10.^linspace(log(LowFreq), log(UpperFred), nChannels+1);
+        bf = 10.^linspace(log(LowFreq), log(UpperFreq), nChannels+1);
         lowerl = bf(1:end-1);
         upperl = bf(2:end);
         center = sqrt(lowerl.*upperl);
