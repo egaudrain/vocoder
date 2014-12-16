@@ -4,13 +4,16 @@ function filter_struct = filter_bands(range, n, fs, type, order, shift)
 %   for ESTFILT_SHIFT.
 %
 %   RANGE is a two element vector containing the lower and upper cutoff
-%   frequencies. N is the number of channels. FS is the sampling frequency.
+%   frequencies. 
+%   N is the number of channels. 
+%   FS is the sampling frequency.
 %   TYPE defines how the frequency bands will be spaced. The possible
 %   values are 'greenwood', 'linear', 'log'. If omitted, 'greenwood' is
-%   selected. ORDER is the order of the filters (remember that this will be
-%   multiplied by 4 in the actual vocoder). Default is 3. SHIFT is the
-%   shift in mm towards the base of the cochlea. If omitted, no shift is
-%   applied.
+%   selected. 
+%   ORDER is the order of the filters (remember that this will be
+%   multiplied by 4 in the actual vocoder). Default is 3. 
+%   SHIFT is the shift in mm towards the base of the cochlea. If omitted, 
+%   no shift is applied.
 %
 %   By default, Buttherworth filters are used. To use other filters,
 %   provide a cell array in place of the ORDER argument, of the form 

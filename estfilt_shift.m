@@ -56,7 +56,11 @@ switch type
         LowFreq = range(1);
         UpperFreq = range(2);
         
-        bf = 10.^linspace(log(LowFreq), log(UpperFreq), nChannels+1);
+        %bf = 10.^linspace(log(LowFreq), log(UpperFreq), nChannels+1);
+        %%This command gives an error since max(bf) is 7*10^8 because of
+        %%incorrect usage of the fn 'log' instead of 'log10'.
+        
+        bf = logspace(log10(LowFreq), log10(UpperFreq), nChannels+1); %used log10 instead of log bec in matlab log is the natural logarithm 'ln' --Nawal
         lowerl = bf(1:end-1);
         upperl = bf(2:end);
         center = sqrt(lowerl.*upperl);
@@ -78,6 +82,7 @@ end
 % ----------------------
 
 if fs/2<max(upperl)
+    disp(type);
     error('vocode:fs_too_low', 'The sampling rate %d is too low for the upper frequency %d', fs, max(upperl));
 end
 
