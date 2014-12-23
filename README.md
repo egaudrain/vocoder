@@ -214,6 +214,32 @@ Note that for the 'noise', 'low-noise' and 'pshc' carriers, the random stream wi
 
 
 
+How to cite this vocoder
+------------------------
+
+If you want to cite the vocoder itself, here's the reference:
+
++ E. Gaudrain (2014) "Vocoder 2013," Online code at https://github.com/egaudrain/auditory-research-tools/tree/master/vocoder_2013.
+
+To cite a paper where the vocoder was used:
+
++ E. Gaudrain and D. Başkent (under review) "Factors limiting vocal-tract length discrimination in cochlear implant simulations." J. Acoust. Soc. Am.
+
+If you use the PSHC or low-noise noise carriers, you also have to cite:
+
++ G. Hilkhuysen and O. Macherey (2014) "Optimizing pulse-spreading harmonic complexes to minimize intrinsic modulations after auditory filtering," J. Acoust. Soc. Am. 136:1281–1294. doi: [10.1121/1.4890642](http://dx.doi.org/10.1121/1.4890642).
+
+
+
+
+Acknowledgements
+----------------
+
+The original base of the code was written by Stuart Rosen (UCL) and Robert P. Carlyon (MRC CBSU), before being re-written by Etienne Gaudrain. Olivier Macherey, Gaston Hilkhuysen and Quentin Mesnildrey (CNRS LMA), provided useful comments. Nawal El Boghdady (UMCG) found and corrected a number of bugs.
+
+
+
+
 References
 ----------
 
