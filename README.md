@@ -223,7 +223,7 @@ If you want to cite the vocoder itself, here's the reference:
 
 To cite a paper where the vocoder was used:
 
-+ E. Gaudrain and D. Başkent (under review) "Factors limiting vocal-tract length discrimination in cochlear implant simulations." J. Acoust. Soc. Am.
++ E. Gaudrain and D. Başkent (2015) "Factors limiting vocal-tract length discrimination in cochlear implant simulations." J. Acoust. Soc. Am., in press.
 
 If you use the PSHC or low-noise noise carriers, you also have to cite:
 
