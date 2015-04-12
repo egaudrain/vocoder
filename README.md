@@ -37,7 +37,7 @@ p.synth.carrier = 'sin';
 p.synth.filter_before = false;
 p.synth.filter_after  = false;
 
-[y, fs] = vocoder(x, fs, p);
+[y, fs] = vocode(x, fs, p);
 ```
 
 
