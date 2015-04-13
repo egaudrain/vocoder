@@ -219,11 +219,11 @@ How to cite this vocoder
 
 If you want to cite the vocoder itself, here's the reference:
 
-+ E. Gaudrain (2014) "Vocoder 2013," Online code at https://github.com/egaudrain/auditory-research-tools/tree/master/vocoder_2013.
++ E. Gaudrain (2014) "Vocoder," Online code at https://github.com/egaudrain/vocoder.
 
 To cite a paper where the vocoder was used:
 
-+ E. Gaudrain and D. Başkent (2015) "Factors limiting vocal-tract length discrimination in cochlear implant simulations." J. Acoust. Soc. Am., in press.
++ E. Gaudrain and D. Başkent (2015) "Factors limiting vocal-tract length discrimination in cochlear implant simulations." J. Acoust. Soc. Am., 137, 1298-1308. doi: [10.1121/1.4908235](http://dx.doi.org/10.1121/1.4908235).
 
 If you use the PSHC or low-noise noise carriers, you also have to cite:
 
