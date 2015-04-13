@@ -1,5 +1,5 @@
-VOCODER (2013)
-==============
+VOCODER
+=======
 
 The code in this section is used to implement various vocoders, generally used to simulate acoustically what cochlear implant users experience through their device. The code base was originally produced by Stuart Rosen, later modified by Bob Carlyon, and since more or less completely rewritten in a more modern style and with many additions.
 
