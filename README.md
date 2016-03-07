@@ -3,7 +3,7 @@ VOCODER (2013)
 
 The code in this section is used to implement various vocoders, generally used to simulate acoustically what cochlear implant users experience through their device. The code base was originally produced by Stuart Rosen, later modified by Bob Carlyon, and since more or less completely rewritten in a more modern style and with many additions.
 
-This manual is written assuming the reader has some notions of how a vocoder works.
+**Disclaimer:** This manual is written assuming the reader has some notions of how a vocoder works. If this is not the case, get in touch with someone with experience with vocoders as it is very easy to choose the wrong parameters. Know what you are doing, and do not assume that this code is foolproof. It comes with absolutely no warranty, and is only made available for information purposes. Finally, always check for the last version at https://github.com/egaudrain/vocoder.
 
 The `vocode()` function is supposed to cover a lot of cases, and therefore receives a rather complex set of parameters. The said function is called like this: `[y, fs]=vocode(x,fs,p)`. `x` is a (single channel, i.e. mono) signal. `fs` is the sampling frequency and `p` is a structure with all the parameters. The function returns `y`, the vocoded version of `x`.
 
@@ -20,7 +20,7 @@ Each of these are documented below, in the same order.
 To give you an overview on how to use the code, here's a complete working example:
 
 ```matlab
-[x, fs] = wavread('filename.wav'); % Replace filename.wav with the actual path to the wave file
+[x, fs] = audioread('filename.wav'); % Replace filename.wav with the actual path to the wave file
 
 p = struct();
 p.analysis_filters  = filter_bands([150, 7000], 8, fs, 'greenwood', 1.5); % Order is multiplied by 4, so 1.5 gives 6
@@ -84,7 +84,7 @@ These arguments are optional:
 - `order`: is the order of the filters (default is 3). By default, Butterworth bandpass filters are used, with the `filtfilt()` function. As a result the order passed as an argument here is effectively multiplied by 4. See below for more details on this.
 - `shift`: the shift of the frequency range expressed in millimeters along the cochlea (based on Greenwood's function).
 
-By default, Buttherworth filters are used. To use other filters, provide a cell array of the form `{filter_type, filter_parameter}` for `order`. Providing a number for this argument is equivalent to `{'butter', order}`. Other possible values are 'bingabr_2008' (then the order is the slope in dB/mm) or a function  handle of the form:
+By default, Buttherworth filters are used. High order values will produce very sharp filters that may create artifacts if the filters are narrow. Low order valuers will create filters that substantially overlap, which, depending on your carrier, may also create artifacts. To use other filters, provide a cell array of the form `{filter_type, filter_parameter}` for `order`. Providing a number for this argument is equivalent to `{'butter', order}`. Other possible values are 'bingabr_2008' (then the order is the slope in dB/mm) or a function  handle of the form:
 
 ```matlab
 [b, a] = filter_function(order, [low, high], fs)
@@ -92,9 +92,9 @@ By default, Buttherworth filters are used. To use other filters, provide a cell 
 
 Where 'low' and 'high' are calculated from the range, the number of channels and the type of spacing, and must be in normalized frequency (f/(2*fs)).
 
+If you use option 'bingabr_2008' for a publication, do not forget to cite [Bingabr et al. (2008)](http://dx.doi.org/10.1016/j.heares.2008.04.012).
+
 If the filter type is 'butter' (including if `order` is simply a number rather than a cell-array)  and a fractional order is used (has to be a multiple of 1/2), separate low-pass and high-pass filters are used instead of a bandpass.
-
-
 
 ### Examples
 
@@ -223,7 +223,8 @@ If you want to cite the vocoder itself, here's the reference:
 
 To cite a paper where the vocoder was used:
 
-+ E. Gaudrain and D. Başkent (2015) "Factors limiting vocal-tract length discrimination in cochlear implant simulations." J. Acoust. Soc. Am., in press.
++ E. Gaudrain and D. Başkent (2015) "Factors limiting vocal-tract length discrimination in cochlear implant simulations." J. Acoust. Soc. Am. 137:1298–1308. doi: [10.1121/1.4908235](http://dx.doi.org/10.1121/1.4908235).
+
 
 If you use the PSHC or low-noise noise carriers, you also have to cite:
 
