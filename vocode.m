@@ -54,6 +54,13 @@ function [xOut, fsOut, p] = vocode(xIn, fsIn, params)
 %   initialized using the field PARAMS.random_seed. By default this field
 %   contains sum(100*clock).
 %
+%   Before using, please read the README.md file!
+%
+%   If used in a publication, please cite:
+%   Gaudrain E, Başkent D (2015) Factors limiting vocal-tract length 
+%   discrimination in cochlear implant simulations.
+%   J Acoust Soc Am 137:1298–1308. doi: 10.1121/1.4908235
+%
 %   See also FILTER_BANDS, GET_LOWNOISE, GET_PSHC, FILTFILT
  
 
