@@ -1,5 +1,5 @@
-VOCODER (2013)
-==============
+VOCODER
+=======
 
 The code in this section is used to implement various vocoders, generally used to simulate acoustically what cochlear implant users experience through their device. The code base was originally produced by Stuart Rosen, later modified by Bob Carlyon, and since more or less completely rewritten in a more modern style and with many additions.
 
@@ -219,7 +219,7 @@ How to cite this vocoder
 
 If you want to cite the vocoder itself, here's the reference:
 
-+ E. Gaudrain (2014) "Vocoder 2013," Online code at https://github.com/egaudrain/auditory-research-tools/tree/master/vocoder_2013.
++ E. Gaudrain (2014) "Vocoder," Online code at https://github.com/egaudrain/vocoder.
 
 To cite a paper where the vocoder was used:
 
