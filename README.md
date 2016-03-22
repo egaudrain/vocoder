@@ -217,9 +217,9 @@ Note that for the 'noise', 'low-noise' and 'pshc' carriers, the random stream wi
 How to cite this vocoder
 ------------------------
 
-If you want to cite the vocoder itself, here's the reference:
+If you want to cite the vocoder itself, release v1.0 "Basal" has a DOI [![DOI](https://zenodo.org/badge/21013/egaudrain/vocoder.svg)](https://zenodo.org/badge/latestdoi/21013/egaudrain/vocoder). Cite using this:
 
-+ E. Gaudrain (2014) "Vocoder," Online code at https://github.com/egaudrain/vocoder.
++ E. Gaudrain (2016) "Vocoder, v1.0." Online code at https://github.com/egaudrain/vocoder. doi: [10.5281/zenodo.48120](http://dx.doi.org/10.5281/zenodo.48120).
 
 To cite a paper where the vocoder was used:
 
