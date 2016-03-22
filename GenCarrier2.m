@@ -26,17 +26,34 @@ function [array_final,time_final]=GenCarrier2(f0, hmin, hmax, fs, duration, phas
 %    array (values)
 %    time (in seconds)
 
-% Copyright LMA CNRS, Olivier Macherey, 2013 / UMCG, Etienne Gaudrain, 2013
-% This is code is distributed with no warranty under GNU General Public
-% License v3.0. See http://www.gnu.org/licenses/gpl-3.0.txt for the full
-% text.
 
-%modified from HARMCOMP to input (software) filter cutoffs & slopes
-%based on Bob Carlyon's Fortran harmcomp3.for
-%dragged into 21st century by CJL (Fri, May 17 2002, 14:20:28 ; 137/366)
-%then modified by Bob to output real array with values between -1.0 and +1.0
-%th eresulting HRMCOMPREAL modified here to HRMCOMPDIG to do all filtering 
-%digitally
+%---------
+% This file is part of
+% vocoder: a versatile Matlab vocoder for research purposes
+% Copyright (C) 2013 LMA CNRS, Olivier Macherey / CRNL CNRS, UMCG, Etienne Gaudrain
+%
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+%---------
+% See README.md for rules on citations.
+%---------
+
+% modified from HARMCOMP to input (software) filter cutoffs & slopes
+% based on Bob Carlyon's Fortran harmcomp3.for
+% dragged into 21st century by CJL (Fri, May 17 2002, 14:20:28 ; 137/366)
+% then modified by Bob to output real array with values between -1.0 and +1.0
+% th eresulting HRMCOMPREAL modified here to HRMCOMPDIG to do all filtering 
+% digitally
 
 % modified from hrmcompdig_filttimes.m to start the stimulus in between 2 periods (so that every pulses
 % are identical).

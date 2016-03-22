@@ -1,6 +1,4 @@
 function [lower,center,upper]= greenwud(N, low, high, dbg)
-%
-
 % [lower,center,upper] = greenwud(N,low,high)
 %
 % This function returns the lower, center and upper freqs
@@ -9,7 +7,32 @@ function [lower,center,upper]= greenwud(N, low, high, dbg)
 % 	 low - (left-edge) 3dB frequency of the first filter
 %	 high - (right-edge) 3dB frequency of the last filter
 
-% Stuart Rosen -- June 1998
+% Adapted from Stuart Rosen -- June 1998
+
+% Etienne Gaudrain <etienne.gaudrain@cnrs.fr> - 2013-09-11
+% CNRS UMR5292, Lyon, FR
+% KNO, University Medical Center Groningen, NL
+
+%---------
+% This file is part of
+% vocoder: a versatile Matlab vocoder for research purposes
+% Copyright (C) 2016 Etienne Gaudrain
+%
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+%---------
+% See README.md for rules on citations.
+%---------
 
 
 % Set up equally spaced places on the basilar membrane

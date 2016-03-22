@@ -8,13 +8,30 @@ function nz = get_lownoise(n, fs, f1, f2, random_seed)
 %   When the random seed RSEED is changed, a new noise file is created and
 %   stored in the carriers/ subdirectory.
 
-% Etienne Gaudrain <e.p.c.gaudrain@umcg.nl> - 2013-09-11
-% University Medical Center Groningen, NL
+% Etienne Gaudrain <etienne.gaudrain@cnrs.fr> - 2013-09-11
+% CNRS UMR5292, Lyon, FR
+% KNO, University Medical Center Groningen, NL
 
-% Copyright UMCG, Etienne Gaudrain, 2013
-% This is code is distributed with no warranty under GNU General Public
-% License v3.0. See http://www.gnu.org/licenses/gpl-3.0.txt for the full
-% text.
+%---------
+% This file is part of
+% vocoder: a versatile Matlab vocoder for research purposes
+% Copyright (C) 2016 Etienne Gaudrain
+%
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+%---------
+% See README.md for rules on citations.
+%---------
 
 d = n/fs;
 N = ceil(d)+1;

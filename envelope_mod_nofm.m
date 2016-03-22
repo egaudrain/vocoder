@@ -2,13 +2,30 @@ function Env = envelope_mod_nofm(Env, fs, p, n, fc)
 
 % Applies maxima selection to the vocoder.
 
-% Etienne Gaudrain <e.p.c.gaudrain@umcg.nl> - 2014-02-14
+% Etienne Gaudrain <etienne.gaudrain@cnrs.fr> - 2014-02-14
+% CNRS UMR5292, Lyon, FR
 % KNO, University Medical Center Groningen, NL
 
-% Copyright UMCG, Etienne Gaudrain, 2014
-% This is code is distributed with no warranty under GNU General Public
-% License v3.0. See http://www.gnu.org/licenses/gpl-3.0.txt for the full
-% text.
+%---------
+% This file is part of
+% vocoder: a versatile Matlab vocoder for research purposes
+% Copyright (C) 2016 Etienne Gaudrain
+%
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+%---------
+% See README.md for rules on citations.
+%---------
 
 if nargin<4
     n = 8;
