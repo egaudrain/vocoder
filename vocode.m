@@ -157,8 +157,7 @@ nz   = zeros(nSmp, 1);
 % RMS levels of original filter-bank outputs are stored in the vector 'levels'
 levels = zeros(nCh, 1);
 
-%--------------------- Synthesize each channel
-
+%--------------------- Envelope extraction
 for i=1:nCh
 
     y = apply_filter(AF, i, xIn);
@@ -214,58 +213,66 @@ for km = 1:length(p.envelope.modifiers)
     Env = md_f(Env, fs, p, md_args{:});
 end
 
-for i=1:nCh
-    switch p.synth.carrier
-        case 'noise'
-            %-- Excite with noise
-            rng(p.random_seed);
-            nz = sign(rand(nSmp,1)-0.5);
-            if p.synth.filter_before
-                nz = apply_filter(SF, i, nz);
+%--------------------- Synthesize each channel
+
+switch p.output
+    case 'synth'
+        for i=1:nCh
+            switch p.synth.carrier
+                case 'noise'
+                    %-- Excite with noise
+                    rng(p.random_seed);
+                    nz = sign(rand(nSmp,1)-0.5);
+                    if p.synth.filter_before
+                        nz = apply_filter(SF, i, nz);
+                    end
+
+                case {'sine', 'sin'}
+                    %-- Sinewave
+                    nz = sin(SF.center(i)*2.0*pi*(0:(nSmp-1))'/fs);
+
+                case {'low-noise', 'low-noise-noise', 'lnn'}
+                    %-- Low-noise-noise
+                    nz = get_lownoise(nSmp, fs, SF.lower(i), SF.upper(i), p.random_seed);
+
+                case {'pshc'}
+                    nz = get_pshc(nSmp, fs, SF.lower(i), SF.upper(i), p.synth.f0, p.random_seed);
+
             end
-            
-        case {'sine', 'sin'}
-            %-- Sinewave
-            nz = sin(SF.center(i)*2.0*pi*(0:(nSmp-1))'/fs);
-            
-        case {'low-noise', 'low-noise-noise', 'lnn'}
-            %-- Low-noise-noise
-            nz = get_lownoise(nSmp, fs, SF.lower(i), SF.upper(i), p.random_seed);
-            
-        case {'pshc'}
-            nz = get_pshc(nSmp, fs, SF.lower(i), SF.upper(i), p.synth.f0, p.random_seed);
+
+            ModC(:,i) = Env(:,i) .* nz;
+
+            if p.synth.filter_after
+                ModC(:,i) = apply_filter(SF, i, ModC(:,i));
+            end
+
+            % Restore the RMS of the channel
+            if isempty(p.envelope.modifiers) % We only do this if the envelope was unmodified
+                ModC(:,i) = ModC(:,i) / rms(ModC(:,i)) * levels(i);
+            end
+        end
         
-    end
-    
-    ModC(:,i) = Env(:,i) .* nz;
-    
-    if p.synth.filter_after
-        ModC(:,i) = apply_filter(SF, i, ModC(:,i));
-    end
-    
-    % Restore the RMS of the channel
-    if isempty(p.envelope.modifiers) % We only do this if the envelope was unmodified
-        ModC(:,i) = ModC(:,i) / rms(ModC(:,i)) * levels(i);
-    end
+        %--------------------- Reconstruct
+
+        xOut = sum(ModC, 2);
+        xOut = xOut / rms(xOut) * rmsOut;
+      
+        % WATCH OUT: the output is not scaled to avoid clipping
+        %{
+        max_sample = max(abs(xOut));
+        if max_sample > (2^15-2)/2^15
+            % figure out degree of attenuation necessary
+            ratio = 1.0/max_sample;
+            wave=wave * ratio;
+            warning(sprintf('Sound scaled by %f = %f dB\n', ratio, 20*log10(ratio)));
+        end
+
+        xOut = wave';
+        %}
+        
+    case 'env'
+        xOut = Env;
 end
-
-%--------------------- Reconstruct
-
-xOut = sum(ModC, 2);
-xOut = xOut / rms(xOut) * rmsOut;
-
-% CAREFUL: the output is not scaled to avoid clipping
-%{
-max_sample = max(abs(xOut));
-if max_sample > (2^15-2)/2^15
-    % figure out degree of attenuation necessary
-    ratio = 1.0/max_sample;
-    wave=wave * ratio;
-    warning(sprintf('Sound scaled by %f = %f dB\n', ratio, 20*log10(ratio)));
-end
-
-xOut = wave';
-%}
 
 fsOut = fsIn;
 
@@ -290,6 +297,9 @@ p.synth.carrier = 'noise';
 p.synth.filter_before = false; % Filter the carrier before modulation
 p.synth.filter_after  = true;  % Filter the carrier after modulation
 p.synth.f0 = .3;
+
+%-- Output
+p.output = 'synth';
 
 %-- Other params
 p.display = false;
@@ -333,15 +343,19 @@ end
 function y = apply_filter(filter_struct, i, x)
 % Filters X in channel I of FILTER_STRUCT
 
-if iscell(filter_struct.filterB{i})
-    % filterB/A is a collection of filters that need to be run after each
-    % other.
-    y = x;
-    b = filter_struct.filterB{i};
-    a = filter_struct.filterA{i};
-    for k=1:length(b)
-        y = filtfilt(b{k}, a{k}, y);
+if iscell(filter_struct.filterB)
+    if iscell(filter_struct.filterB{i})
+        % filterB/A is a collection of filters that need to be run after each
+        % other.
+        y = x;
+        b = filter_struct.filterB{i};
+        a = filter_struct.filterA{i};
+        for k=1:length(b)
+            y = filtfilt(b{k}, a{k}, y);
+        end
+    else
+        y = filtfilt(filter_struct.filterB{i}, filter_struct.filterA{i}, x);
     end
 else
-    y = filtfilt(filter_struct.filterB{i}, filter_struct.filterA{i}, x);
+    y = filtfilt(filter_struct.filterB(i,:), filter_struct.filterA(i,:), x);
 end
