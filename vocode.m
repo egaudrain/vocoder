@@ -271,6 +271,9 @@ switch p.output
         %}
         
     case 'env'
+        for i=1:nCh
+            Env(:,i) = Env(:,i) / rms(Env(:,i)) * levels(i);
+        end
         xOut = Env;
 end
 
