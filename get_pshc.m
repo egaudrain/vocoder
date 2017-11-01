@@ -41,7 +41,7 @@ end
 fname = fullfile(pathstr, 'carriers', fname);
 
 if exist(fname, 'file')
-    x = wavread(fname);
+    x = audioread(fname);
 else
     rng(random_seed);
     
@@ -49,7 +49,7 @@ else
     
     x = .9 * x / max(abs(x));
     
-    wavwrite(x, fs, fname);
+    audiowrite(fname, x, fs);
 end
 
 x = repmat(x, N, 1);
