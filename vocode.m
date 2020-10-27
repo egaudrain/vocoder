@@ -198,17 +198,21 @@ for km = 1:length(p.envelope.modifiers)
         md_name = md;
         md_args = {};
     end
-    switch md_name
-        case 'threshold'
-            md_f = @envelope_mod_threshold;
-        case 'n-of-m'
-            md_f = @envelope_mod_nofm;
-        otherwise
-            if isa(md_name, 'function_handle')
-                md_f = md_name;
-            else
-                error('Envelope modifier "%s" is unknown.', md_name);
-            end
+    if isstring(md_name) || ischar(md_name)
+        switch md_name
+            case 'threshold'
+                md_f = @envelope_mod_threshold;
+            case 'n-of-m'
+                md_f = @envelope_mod_nofm;
+            otherwise
+                error('Envelope modifier "%s" is unknown.', md_name); 
+        end
+    else
+        if isa(md_name, 'function_handle')
+            md_f = md_name;
+        else
+            error('Envelope modifier "%s" is unknown.', md_name);
+        end
     end
     Env = md_f(Env, fs, p, md_args{:});
 end
