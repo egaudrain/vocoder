@@ -101,8 +101,9 @@ fs = fsIn;
 % the RMS of the output corresponds to the RMS of this portion of the
 % spectrum of the input.
 
-[b, a] = butter(ceil(min(p.analysis_filters.order([1, end]))), [p.analysis_filters.lower(1), p.analysis_filters.upper(end)]*2/fs);
-rmsOut = rms(filtfilt(b, a, xIn));
+[z,po,k] = butter(ceil(min(p.analysis_filters.order([1, end]))), [p.analysis_filters.lower(1), p.analysis_filters.upper(end)]*2/fs);
+[sos, g] = zp2sos(z,po,k);
+rmsOut = rms(filtfilt(sos, g, xIn));
 
 %--------------------- Prepare the band filters
 AF = p.analysis_filters;
@@ -350,19 +351,43 @@ end
 function y = apply_filter(filter_struct, i, x)
 % Filters X in channel I of FILTER_STRUCT
 
-if iscell(filter_struct.filterB)
-    if iscell(filter_struct.filterB{i})
-        % filterB/A is a collection of filters that need to be run after each
-        % other.
-        y = x;
-        b = filter_struct.filterB{i};
-        a = filter_struct.filterA{i};
-        for k=1:length(b)
-            y = filtfilt(b{k}, a{k}, y);
+if ~isfield(filter_struct, 'coef_type')
+    filter_struct.coef_type = 'ba';
+end
+
+switch filter_struct.coef_type
+    case 'ba'
+        if iscell(filter_struct.filterB)
+            if iscell(filter_struct.filterB{i})
+                % filterB/A is a collection of filters that need to be run after each
+                % other.
+                y = x;
+                b = filter_struct.filterB{i};
+                a = filter_struct.filterA{i};
+                for k=1:length(b)
+                    y = filtfilt(b{k}, a{k}, y);
+                end
+            else
+                y = filtfilt(filter_struct.filterB{i}, filter_struct.filterA{i}, x);
+            end
+        else
+            y = filtfilt(filter_struct.filterB(i,:), filter_struct.filterA(i,:), x);
         end
-    else
-        y = filtfilt(filter_struct.filterB{i}, filter_struct.filterA{i}, x);
-    end
-else
-    y = filtfilt(filter_struct.filterB(i,:), filter_struct.filterA(i,:), x);
+    case 'sos'
+        if iscell(filter_struct.filterSOS)
+            if iscell(filter_struct.filterSOS{i})
+                % filterB/A is a collection of filters that need to be run after each
+                % other.
+                y = x;
+                sos = filter_struct.filterSOS{i};
+                g = filter_struct.filterG{i};
+                for k=1:length(sos)
+                    y = filtfilt(sos{k}, g{k}, y);
+                end
+            else
+                y = filtfilt(filter_struct.filterSOS{i}, filter_struct.filterG{i}, x);
+            end
+        else
+            y = filtfilt(filter_struct.filterSOS(i,:), filter_struct.filterG(i,:), x);
+        end
 end

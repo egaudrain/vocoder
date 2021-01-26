@@ -37,15 +37,15 @@ freq_maps.hr90k = [250,416,494,587,697,828,983,1168,1387,1648,1958,2326,2762,328
 
 %------------
 
-if isnumeric(filter_options)
-    filter_options = {'butter', filter_options};
-end
-filter_type = filter_options{1};
-order = filter_options{2};    
+% if isnumeric(filter_options)
+%     filter_options = {'butter', filter_options};
+% end
+% filter_type = filter_options{1};
+% order = filter_options{2};    
 
 
-FS=fs/2;
-nOrd=order*2;
+% FS=fs/2;
+% nOrd=order*2;
 
 switch type
     % ------------------ greenwood spacing of filters ---------------------
@@ -94,58 +94,61 @@ switch type
 end
 % ----------------------
 
-if fs/2<max(upperl)
-    error('vocode:fs_too_low', 'The sampling rate %d is too low for the upper frequency %d', fs, max(upperl));
-end
+filter_struct = filter_coefficients([lowerl; center; upperl], fs, filter_options);
+filter_struct.type = type;
 
-% Handle filter type
-switch filter_type
-    case 'butter'
-        filter_func = @butter;
-    case 'bingabr_2008'
-        filter_func = @(n,w) filter_bingabr_2008(n,w,fs);
-    otherwise
-        if isa(filter_type, 'function_handle')
-            filter_func = @(n,w) filter_type(n,w,fs);
-        else
-            error('Filter type "%s" is unknown.', filter_type);
-        end
-end
-
-%filterA=zeros(nChannels,nOrd+1);
-%filterB=zeros(nChannels,nOrd+1);
-
-filterA = cell(nChannels,1);
-filterB = cell(nChannels,1);
-
-for i=1:nChannels
-    w=[lowerl(i)/FS, upperl(i)/FS];
-    
-    % Butter is a special case because we can get orders in half
-    if ischar(filter_type) && strcmp(filter_type, 'butter') && mod(order,1)~=0
-        if mod(order,1)==.5 % We have half filters => use low/high pass 
-            [b1,a1] = butter(order*2, w(1), 'high');
-            [b2,a2] = butter(order*2, w(2), 'low');
-            b = {b1, b2};
-            a = {a1, a2};
-        else
-            error('2*ORDER has to be an integer (provided ORDER=%f).', order);
-        end
-    else
-        [b, a] = filter_func(order, w);
-    end
-    filterB{i} = b;
-    filterA{i} = a;
-end
-
-
-filter_struct.filterA = filterA;
-filter_struct.filterB = filterB;
-filter_struct.center  = center;
-filter_struct.lower   = lowerl;
-filter_struct.upper   = upperl;
-filter_struct.fs      = fs;
-filter_struct.type    = type;
-filter_struct.order   = repmat(order, 1, nChannels);
-filter_struct.filter_type = filter_type;
+% if fs/2<max(upperl)
+%     error('vocode:fs_too_low', 'The sampling rate %d is too low for the upper frequency %d', fs, max(upperl));
+% end
+% 
+% % Handle filter type
+% switch filter_type
+%     case 'butter'
+%         filter_func = @butter;
+%     case 'bingabr_2008'
+%         filter_func = @(n,w) filter_bingabr_2008(n,w,fs);
+%     otherwise
+%         if isa(filter_type, 'function_handle')
+%             filter_func = @(n,w) filter_type(n,w,fs);
+%         else
+%             error('Filter type "%s" is unknown.', filter_type);
+%         end
+% end
+% 
+% %filterA=zeros(nChannels,nOrd+1);
+% %filterB=zeros(nChannels,nOrd+1);
+% 
+% filterA = cell(nChannels,1);
+% filterB = cell(nChannels,1);
+% 
+% for i=1:nChannels
+%     w=[lowerl(i)/FS, upperl(i)/FS];
+%     
+%     % Butter is a special case because we can get orders in half
+%     if ischar(filter_type) && strcmp(filter_type, 'butter') && mod(order,1)~=0
+%         if mod(order,1)==.5 % We have half filters => use low/high pass 
+%             [b1,a1] = butter(order*2, w(1), 'high');
+%             [b2,a2] = butter(order*2, w(2), 'low');
+%             b = {b1, b2};
+%             a = {a1, a2};
+%         else
+%             error('2*ORDER has to be an integer (provided ORDER=%f).', order);
+%         end
+%     else
+%         [b, a] = filter_func(order, w);
+%     end
+%     filterB{i} = b;
+%     filterA{i} = a;
+% end
+% 
+% 
+% filter_struct.filterA = filterA;
+% filter_struct.filterB = filterB;
+% filter_struct.center  = center;
+% filter_struct.lower   = lowerl;
+% filter_struct.upper   = upperl;
+% filter_struct.fs      = fs;
+% filter_struct.type    = type;
+% filter_struct.order   = repmat(order, 1, nChannels);
+% filter_struct.filter_type = filter_type;
 
