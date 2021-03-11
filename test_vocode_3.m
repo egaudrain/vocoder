@@ -5,9 +5,7 @@ n = 4;
 fs = 44100;
 type = 'greenwood';
 shift = 0;
-order = 3;
-
-filter_struct = filter_bands(range, n, fs, type, order, shift);
+order = 12;
 
 p = struct();
 p.envelope = struct();
@@ -27,41 +25,21 @@ p.synth.f0 = 1;
 p.display = false;
 p.random_seed = 1;
 
-p.analysis_filters = filter_struct;
+p.analysis_filters = estfilt_shift(n,type,fs,range,{'butter', order, 'sos'});
 
-p.envelope.fc = min(p.analysis_filters.lower, (p.analysis_filters.upper - p.analysis_filters.lower)/2);
-%p.envelope.fc = p.analysis_filters.lower;
-
+%-----
 
 sound_path = '~/Sounds/CRM_York/Normalised (RMS Power -21dBFS)';
 [x, fs] = audioread(fullfile(sound_path, 'N-CRM-F1-A-B1.wav'));
 
-tic
-[y1, fs, p1] = vocode(x, fs, p);
-toc
 
+tic()
+[y_sos, fs, psos] = vocode(x, fs, p);
+toc()
 
-p.synth.carrier = 'sin';
-p.synth.filter_after = false;
+p.analysis_filters = estfilt_shift(n,type,fs,range,{'butter', order, 'ba'});
 
+tic()
+[y_ba, fs, pab] = vocode(x, fs, p);
+toc()
 
-tic
-[y2, fs, p2] = vocode(x, fs, p);
-toc
-
-
-p.synth.carrier = 'low-noise';
-p.synth.filter_after = false;
-
-
-tic
-[y31, fs, p3] = vocode(x, fs, p);
-toc
-
-p.synth.carrier = 'pshc';
-p.synth.filter_after = false;
-
-
-tic
-[y41, fs, p4] = vocode(x, fs, p);
-toc

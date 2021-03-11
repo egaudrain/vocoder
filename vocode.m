@@ -158,6 +158,11 @@ nz   = zeros(nSmp, 1);
 % RMS levels of original filter-bank outputs are stored in the vector 'levels'
 levels = zeros(nCh, 1);
 
+WARNING_STATE = warning();
+if strcmp(AF.coef_type, 'sos') || strcmp(SF.coef_type, 'sos')
+    warning('off', 'signal:filtfilt:ParseSOS');
+end
+
 %--------------------- Envelope extraction
 for i=1:nCh
 
@@ -283,6 +288,8 @@ switch p.output
 end
 
 fsOut = fsIn;
+
+warning(WARNING_STATE);
 
 %==========================================================================
 function p = default_parameters(params)
