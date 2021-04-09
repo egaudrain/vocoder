@@ -35,7 +35,7 @@ p.envelope.fc = 160;
 p.synth = struct();
 p.synth.carrier = 'sin';
 p.synth.filter_before = false;
-p.synth.filter_after  = false;
+p.synth.filter_after  = true;
 
 [y, fs] = vocode(x, fs, p);
 ```
